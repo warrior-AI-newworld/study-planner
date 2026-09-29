@@ -17,6 +17,28 @@ A beginner-friendly MERN task planner. The React client talks to the Express API
 
 The Vite development server forwards `/api` requests to the Express server on port 5000.
 
+## Render deployment
+
+Deploy the frontend and API as separate Render services from the same GitHub repository.
+
+### Static Site (frontend)
+
+- Root directory: `client`
+- Build command: `npm ci && npm run build`
+- Publish directory: `dist`
+- Environment variable: `VITE_API_URL=https://<backend-service>.onrender.com`
+- Add a rewrite from `/*` to `/index.html` so React Router routes work on refresh.
+
+### Web Service (backend)
+
+- Root directory: `server`
+- Build command: `npm ci`
+- Start command: `npm start`
+- Health check path: `/api/health`
+- Environment variables: set `MONGO_URI` to a production MongoDB connection string and `CLIENT_ORIGINS` to the frontend Static Site URL.
+
+The backend permits the configured frontend origin and local Vite origins during development. Never commit `server/.env` or production database credentials.
+
 ## Project structure
 
 The backend follows an MVC-style flow: routes map API endpoints to controllers, controllers validate requests and coordinate with Mongoose models, and `app.js` wires the Express middleware and routes. `server.js` loads the environment, connects to MongoDB, and starts the HTTP server.
