@@ -1,0 +1,35 @@
+.filter-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.field--filter {
+  width: 150px;
+  gap: 5px;
+}
+
+.field--filter span {
+  font-size: 10px;
+}
+
+.field--filter select {
+  height: 36px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .view-toolbar {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .filter-bar {
+    width: 100%;
+  }
+
+  .field--filter {
+    flex: 1;
+  }
+}

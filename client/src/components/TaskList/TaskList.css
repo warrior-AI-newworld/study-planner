@@ -1,0 +1,19 @@
+.task-list {
+  display: grid;
+  gap: 8px;
+}
+
+.list-message {
+  margin: 0;
+  padding: 32px 18px;
+  border: 1px dashed #cbd7cc;
+  border-radius: 6px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+}
+
+.list-message--error {
+  border-color: #e6c3ba;
+  color: #a63d2d;
+}

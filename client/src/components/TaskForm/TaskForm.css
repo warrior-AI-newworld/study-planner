@@ -1,0 +1,35 @@
+.task-form__title-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 150px 140px auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.field--title {
+  grid-column: auto;
+}
+
+.task-form__submit {
+  height: 42px;
+  white-space: nowrap;
+}
+
+.form-error {
+  margin: 11px 0 0;
+  color: #a63d2d;
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .task-form__title-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field--title {
+    grid-column: 1 / -1;
+  }
+
+  .task-form__submit {
+    align-self: end;
+  }
+}

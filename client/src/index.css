@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+
+:root {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  color: #24322d;
+  background: #f5f7f3;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --ink: #24322d;
+  --muted: #718078;
+  --line: #dce4dc;
+  --paper: #fff;
+  --canvas: #f5f7f3;
+  --green: #1f6b4e;
+  --green-dark: #184f3b;
+  --green-soft: #e7f1ea;
+  --orange: #bd5c36;
+  --yellow: #a66b11;
+}
+
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--canvas); }
+h1, h2, h3, p { margin-top: 0; }
+button, input, select { font: inherit; }
+button, select { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .58; }
+.field { display: grid; min-width: 0; gap: 7px; color: #56645c; font-size: 11px; font-weight: 700; }
+.field input, .field select { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #d6dfd7; border-radius: 5px; outline: 0; background: var(--paper); color: var(--ink); font-size: 13px; }
+.field input:focus, .field select:focus { border-color: #5f9a7c; box-shadow: 0 0 0 3px rgba(31, 107, 78, .12); }
+.field input::placeholder { color: #a0aaa3; }
+.button { min-height: 40px; padding: 0 15px; border: 1px solid transparent; border-radius: 5px; font-size: 12px; font-weight: 700; transition: background .16s ease, border-color .16s ease, color .16s ease; }
+.button--primary { background: var(--green); color: white; }
+.button--primary:hover:not(:disabled) { background: var(--green-dark); }
