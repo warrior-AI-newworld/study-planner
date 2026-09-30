@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import CalendarPage from '../CalendarPage/CalendarPage.jsx';
 import FilterBar from '../FilterBar/FilterBar.jsx';
 import Navbar from '../Navbar/Navbar.jsx';
 import TaskForm from '../TaskForm/TaskForm.jsx';
 import TasksPage from '../TasksPage/TasksPage.jsx';
 import { createTask, deleteTask, getTasks, updateTask } from '../../services/taskApi.js';
+import { getLocalDateString } from '../../utils/dateOnly.js';
 import './App.css';
 
 function TaskPlanner() {
@@ -12,13 +14,15 @@ function TaskPlanner() {
   const [tasks, setTasks] = useState([]);
   const [category, setCategory] = useState('');
   const [priority, setPriority] = useState('');
+  const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [actionError, setActionError] = useState('');
   const [busyTaskId, setBusyTaskId] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const isTaskView = ['/tasks', '/pending', '/completed'].includes(location.pathname);
+  const isTaskView = ['/tasks', '/calendar', '/pending', '/completed'].includes(location.pathname);
+  const isCalendarView = location.pathname === '/calendar';
   const completed = location.pathname === '/pending'
     ? false
     : location.pathname === '/completed'
@@ -31,7 +35,12 @@ function TaskPlanner() {
     let isCurrentRequest = true;
     setLoading(true);
     setLoadError('');
-    const filters = { completed, category, priority };
+    const filters = {
+      completed,
+      category,
+      priority,
+      ...(isCalendarView ? { date: selectedDate } : {}),
+    };
 
     getTasks(filters)
       .then((result) => {
@@ -47,7 +56,7 @@ function TaskPlanner() {
     return () => {
       isCurrentRequest = false;
     };
-  }, [isTaskView, completed, category, priority, refreshKey]);
+  }, [isTaskView, isCalendarView, completed, category, priority, selectedDate, refreshKey]);
 
   async function handleAdd(task) {
     await createTask(task);
@@ -107,6 +116,7 @@ function TaskPlanner() {
         <Routes>
           <Route path="/" element={<Navigate replace to="/tasks" />} />
           <Route path="/tasks" element={<TasksPage title="All tasks" description="Everything on your list." {...pageProps} />} />
+          <Route path="/calendar" element={<CalendarPage {...pageProps} onSelectDate={setSelectedDate} selectedDate={selectedDate} />} />
           <Route path="/pending" element={<TasksPage title="Pending" description="Still in progress." {...pageProps} />} />
           <Route path="/completed" element={<TasksPage title="Completed" description="Done and off your plate." {...pageProps} />} />
           <Route path="*" element={<Navigate replace to="/tasks" />} />

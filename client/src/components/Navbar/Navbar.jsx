@@ -3,6 +3,7 @@ import './Navbar.css';
 
 const navigationItems = [
   { to: '/tasks', label: 'All tasks' },
+  { to: '/calendar', label: 'Calendar' },
   { to: '/pending', label: 'Pending' },
   { to: '/completed', label: 'Completed' },
 ];
@@ -11,9 +12,9 @@ export default function Navbar() {
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <NavLink className="brand" to="/tasks" aria-label="Task Planner home">
+        <NavLink className="brand" to="/tasks" aria-label="Study Planner home">
           <span className="brand__mark" aria-hidden="true">T</span>
-          <span>Task Planner</span>
+          <span>Study Planner</span>
         </NavLink>
         <nav className="primary-nav" aria-label="Task views">
           {navigationItems.map((item) => (

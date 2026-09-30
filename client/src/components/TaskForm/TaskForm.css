@@ -1,12 +1,16 @@
 .task-form__title-row {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) 150px 140px auto;
+  grid-template-columns: minmax(220px, 1fr) 140px 130px 155px auto;
   align-items: end;
   gap: 12px;
 }
 
 .field--title {
   grid-column: auto;
+}
+
+.field--date input {
+  padding: 0 9px;
 }
 
 .task-form__submit {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getLocalDateString } from '../../utils/dateOnly.js';
 import './TaskForm.css';
 
 const categories = ['Study', 'Work', 'Personal', 'Project', 'Other'];
@@ -6,6 +7,7 @@ const priorities = ['Low', 'Medium', 'High'];
 
 export default function TaskForm({ onAdd }) {
   const [title, setTitle] = useState('');
+  const [date, setDate] = useState(getLocalDateString());
   const [category, setCategory] = useState('Study');
   const [priority, setPriority] = useState('Medium');
   const [error, setError] = useState('');
@@ -17,7 +19,7 @@ export default function TaskForm({ onAdd }) {
     setIsSubmitting(true);
 
     try {
-      await onAdd({ title, category, priority });
+      await onAdd({ title, category, priority, date });
       setTitle('');
     } catch (requestError) {
       setError(requestError.message);
@@ -51,6 +53,10 @@ export default function TaskForm({ onAdd }) {
           <select onChange={(event) => setPriority(event.target.value)} value={priority}>
             {priorities.map((value) => <option key={value}>{value}</option>)}
           </select>
+        </label>
+        <label className="field field--date">
+          <span>Date</span>
+          <input onChange={(event) => setDate(event.target.value)} required type="date" value={date} />
         </label>
         <button className="button button--primary task-form__submit" disabled={isSubmitting} type="submit">
           {isSubmitting ? 'Adding...' : 'Add task'}

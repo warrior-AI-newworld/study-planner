@@ -1,3 +1,4 @@
+import { formatDateLabel } from '../../utils/dateOnly.js';
 import './TaskCard.css';
 
 export default function TaskCard({ task, busy, onToggle, onDelete }) {
@@ -18,6 +19,7 @@ export default function TaskCard({ task, busy, onToggle, onDelete }) {
         <div className="task-card__meta">
           <span>{task.category}</span>
           <span className={`priority priority--${task.priority.toLowerCase()}`}>{task.priority}</span>
+          <time dateTime={task.date}>{formatDateLabel(task.date)}</time>
           <span className="task-status">{task.completed ? 'Completed' : 'Pending'}</span>
         </div>
       </div>

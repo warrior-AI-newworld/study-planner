@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { isDateOnly } from '../utils/dateOnly.js';
 
 export const TASK_CATEGORIES = ['Study', 'Work', 'Personal', 'Project', 'Other'];
 export const TASK_PRIORITIES = ['Low', 'Medium', 'High'];
@@ -11,6 +12,14 @@ const taskSchema = new mongoose.Schema(
       required: [true, 'Task title is required.'],
       trim: true,
       maxlength: [MAX_TITLE_LENGTH, `Task title cannot exceed ${MAX_TITLE_LENGTH} characters.`],
+    },
+    date: {
+      type: String,
+      required: [true, 'Task date is required.'],
+      validate: {
+        validator: isDateOnly,
+        message: 'Task date must be a valid date in YYYY-MM-DD format.',
+      },
     },
     category: {
       type: String,

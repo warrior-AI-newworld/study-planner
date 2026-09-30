@@ -1,9 +1,7 @@
-const apiBaseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
-
 async function request(path, options = {}) {
   let response;
   try {
-    response = await fetch(`${apiBaseUrl}${path}`, {
+    response = await fetch(path, {
       ...options,
       headers: {
         ...(options.body ? { 'Content-Type': 'application/json' } : {}),
@@ -11,7 +9,7 @@ async function request(path, options = {}) {
       },
     });
   } catch {
-    throw new Error('Unable to reach the Task Planner API. Check that the server is running.');
+    throw new Error('Unable to reach the Study Planner API. Check that the server is running.');
   }
 
   const result = await response.json().catch(() => null);

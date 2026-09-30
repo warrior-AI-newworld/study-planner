@@ -1,46 +1,50 @@
-# Task Planner
+# Study Planner
 
-A beginner-friendly MERN task planner. The React client talks to the Express API, and only the server connects to MongoDB.
+A MERN task planner. The React client uses the Express API, and only the server connects to MongoDB.
 
-## Backend setup
+## Features
 
-1. Install Node.js 20.19+ or 22.12+.
-2. In `server/`, copy `.env.example` to `.env` and set `MONGO_URI` to a local MongoDB or MongoDB Atlas connection string. The server also accepts `MONGODB_URI`.
-3. Run `npm install` and then `npm run dev` from `server/`.
-4. The API runs at `http://localhost:5000`. Task endpoints support listing/filtering, creating, completing or reopening, and deleting tasks under `/api/tasks`.
+- Create tasks with a title, date, category, and priority.
+- View all, pending, or completed tasks.
+- Filter tasks by category and priority.
+- Browse tasks by date in the calendar.
+- Complete, reopen, and delete tasks.
 
-## Frontend setup
+Task dates use `YYYY-MM-DD` date-only values; no time-of-day scheduling is used.
 
-1. In a second terminal, change to `client/`.
-2. Run `npm install` and then `npm run dev`.
-3. Open the Vite URL shown in the terminal, usually `http://localhost:5173`.
+## Local development
 
-The Vite development server forwards `/api` requests to the Express server on port 5000.
+1. Install Node.js 22.12+.
+2. In `server/`, copy `.env.example` to `.env` and set `MONGODB_URI` to a local MongoDB or MongoDB Atlas connection string.
+3. From `server/`, run `npm install` and then `npm run dev`.
+4. In a second terminal, go to `client/`, run `npm install`, then run `npm run dev`.
+5. Open the Vite URL, usually `http://localhost:5173`. Vite forwards `/api` requests to the server on port 5000.
 
-## Render deployment
+The server uses `MONGODB_URI` as its primary connection variable and `PORT` from the environment, with port 5000 as the local fallback. `MONGO_URI` remains supported as a local compatibility alias.
 
-Deploy the frontend and API as separate Render services from the same GitHub repository.
+## Deploy as one Render Web Service
 
-### Static Site (frontend)
+The root [`render.yaml`](render.yaml) defines one Node Web Service. It builds the Vite client and starts Express, which serves both the React application and the API from the same origin.
 
-- Root directory: `client`
-- Build command: `npm ci && npm run build`
-- Publish directory: `dist`
-- Environment variable: `VITE_API_URL=https://<backend-service>.onrender.com`
-- Add a rewrite from `/*` to `/index.html` so React Router routes work on refresh.
+To use the blueprint, connect `warrior-AI-newworld/study-planner` to Render and create a Blueprint Instance from the repository. The service root directory must remain the repository root.
 
-### Web Service (backend)
+If creating the Web Service manually, use:
 
-- Root directory: `server`
-- Build command: `npm ci`
-- Start command: `npm start`
-- Health check path: `/api/health`
-- Environment variables: set `MONGO_URI` to a production MongoDB connection string and `CLIENT_ORIGINS` to the frontend Static Site URL.
+- **Root directory:** repository root (leave blank)
+- **Build command:** `npm ci --prefix server && npm ci --prefix client && npm run build --prefix client`
+- **Start command:** `npm start --prefix server`
+- **Environment variables:** `MONGODB_URI` set to the MongoDB Atlas connection string and `NODE_ENV=production`. Render provides `PORT` automatically.
 
-The backend permits the configured frontend origin and local Vite origins during development. Never commit `server/.env` or production database credentials.
+Do not set `VITE_API_URL`; the client calls relative `/api/...` paths so production requests stay on the same Render host. For Atlas, create a database user with limited permissions and allow network access from the Render service. Never commit `.env` files or put MongoDB credentials in client variables.
+
+The single Render URL serves `/`, `/tasks`, `/calendar`, `/pending`, `/completed`, and `/api/tasks`. The API also supports filters such as `?completed=false`, `?date=2026-09-30`, `?category=Study`, and `?priority=High`; filters can be combined.
 
 ## Project structure
 
-The backend follows an MVC-style flow: routes map API endpoints to controllers, controllers validate requests and coordinate with Mongoose models, and `app.js` wires the Express middleware and routes. `server.js` loads the environment, connects to MongoDB, and starts the HTTP server.
-
-Each frontend UI component lives in its own folder under `client/src/components/`, with its JSX and component styles together. Shared API calls remain in `client/src/services/`, while `client/src/index.css` contains global styles and design tokens.
+- `client/src/components/`: one folder per UI component, with JSX and CSS together.
+- `client/src/services/`: browser-to-API requests.
+- `server/routes/`: REST endpoint declarations.
+- `server/controllers/`: request validation and task operations.
+- `server/models/`: Mongoose schemas.
+- `server/app.js`: Express middleware, API routes, static frontend, and React Router fallback.
+- `server/server.js`: environment loading, MongoDB connection, and HTTP startup.

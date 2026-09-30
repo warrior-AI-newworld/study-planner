@@ -1,10 +1,11 @@
 import Task, { TASK_CATEGORIES, TASK_PRIORITIES } from '../models/Task.js';
 import mongoose from 'mongoose';
+import { getUtcDayRange, isDateOnly } from '../utils/dateOnly.js';
 
 export async function getTasks(request, response, next) {
   try {
     const filters = {};
-    const { completed, category, priority } = request.query;
+    const { completed, category, priority, date } = request.query;
 
     if (completed !== undefined) {
       if (completed !== 'true' && completed !== 'false') {
@@ -36,8 +37,30 @@ export async function getTasks(request, response, next) {
       filters.priority = priority;
     }
 
+    if (date !== undefined) {
+      if (!isDateOnly(date)) {
+        return response.status(400).json({
+          success: false,
+          error: { message: 'The date filter must be a valid date in YYYY-MM-DD format.' },
+        });
+      }
+
+      const { start, end } = getUtcDayRange(date);
+      filters.$or = [
+        { date },
+        { date: { $exists: false }, createdAt: { $gte: start, $lt: end } },
+      ];
+    }
+
     const tasks = await Task.find(filters).sort({ createdAt: -1 });
-    return response.status(200).json({ success: true, data: { tasks } });
+    const normalizedTasks = tasks.map((task) => {
+      const taskData = task.toObject();
+      return {
+        ...taskData,
+        date: taskData.date ?? taskData.createdAt.toISOString().slice(0, 10),
+      };
+    });
+    return response.status(200).json({ success: true, data: { tasks: normalizedTasks } });
   } catch (error) {
     return next(error);
   }
@@ -45,7 +68,7 @@ export async function getTasks(request, response, next) {
 
 export async function createTask(request, response, next) {
   try {
-    const { title, category, priority } = request.body;
+    const { title, category, priority, date } = request.body ?? {};
 
     if (typeof title !== 'string' || title.trim().length === 0) {
       return response.status(400).json({
@@ -75,7 +98,14 @@ export async function createTask(request, response, next) {
       });
     }
 
-    const task = await Task.create({ title: title.trim(), category, priority });
+    if (!isDateOnly(date)) {
+      return response.status(400).json({
+        success: false,
+        error: { message: 'A valid task date in YYYY-MM-DD format is required.' },
+      });
+    }
+
+    const task = await Task.create({ title: title.trim(), category, priority, date });
     return response.status(201).json({ success: true, data: { task } });
   } catch (error) {
     return next(error);
